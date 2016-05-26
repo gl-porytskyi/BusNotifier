@@ -15,19 +15,29 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import oporytskyi.busnotifier.R;
 import oporytskyi.busnotifier.TheApplication;
+import oporytskyi.busnotifier.dto.Direction;
+import oporytskyi.busnotifier.manager.DirectionManager;
 import oporytskyi.busnotifier.manager.ScheduleManager;
 import oporytskyi.busnotifier.receiver.AlarmReceiver;
 import org.joda.time.LocalDateTime;
+import org.joda.time.LocalTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+    private static final String TAG = MainActivity.class.getName();
+
+    private LinearLayout departuresArea;
     private ScheduleManager scheduleManager;
 
     @Override
@@ -59,7 +69,28 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        scheduleManager = TheApplication.get().getScheduleManager();
+        departuresArea = (LinearLayout) findViewById(R.id.ll_departures);
+
+        TheApplication theApplication = TheApplication.get();
+        scheduleManager = theApplication.getScheduleManager();
+        DirectionManager directionManager = theApplication.getDirectionManager();
+
+        Menu menu = navigationView.getMenu();
+        MenuItem item = menu.getItem(0);
+        List<Direction> directions = directionManager.getDirections();
+        for (int i = 0; i < directions.size(); i++) {
+            final Direction direction = directions.get(i);
+            Log.d(TAG, "add nav " + direction.getName());
+            MenuItem menuItem = item.getSubMenu().add(Menu.NONE, i, i, direction.getName());
+            menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem item) {
+                    Log.d(TAG, "onNavigationItemSelected " + item);
+                    generateTimes(direction);
+                    return false;   //  close drawer in onNavigationItemSelected
+                }
+            });
+        }
     }
 
     @Override
@@ -98,13 +129,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_to) {
-            // Handle the camera action
-        } else if (id == R.id.nav_from) {
-
-        }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -137,5 +161,14 @@ public class MainActivity extends AppCompatActivity
         int mNotificationId = 1;
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(mNotificationId, mBuilder.build());
+    }
+
+    private void generateTimes(Direction direction) {
+        departuresArea.removeAllViews();
+        for (LocalTime localTime : direction.getDepartures()) {
+            Button button = new Button(this);
+            button.setText(localTime.toString());
+            departuresArea.addView(button);
+        }
     }
 }

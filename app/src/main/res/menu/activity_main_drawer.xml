@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:title="Direction">
+    <item android:title="Directions">
         <menu>
-            <item android:id="@+id/nav_to" android:title="To Office"
-                  android:icon="@android:drawable/arrow_up_float"/>
-            <item android:id="@+id/nav_from" android:title="From Office"
-                  android:icon="@android:drawable/arrow_down_float"/>
         </menu>
     </item>
 </menu>
