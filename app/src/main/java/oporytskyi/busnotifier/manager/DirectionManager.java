@@ -12,7 +12,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import oporytskyi.busnotifier.TheApplication;
 import oporytskyi.busnotifier.dto.Direction;
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalTime;
+import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -27,6 +29,7 @@ public class DirectionManager {
     private static final String TAG = DirectionManager.class.getName();
 
     private List<Direction> directions;
+    private DateTimeZone dateTimeZone = DateTimeZone.forID("Europe/Kiev");
 
     public DirectionManager() {
         load();
@@ -49,6 +52,14 @@ public class DirectionManager {
 
     public List<Direction> getDirections() {
         return directions;
+    }
+
+    public DateTimeZone getDateTimeZone() {
+        return dateTimeZone;
+    }
+
+    public Period getBeforehand(String direction) {
+        return Period.minutes(10);
     }
 
     private static class LocalTimeDeserializer extends JsonDeserializer<LocalTime> {

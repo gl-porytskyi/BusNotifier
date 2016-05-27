@@ -17,8 +17,8 @@ public class TheApplication extends Application {
     }
 
     private AssetManager assetManager;
-    private ScheduleManager scheduleManager;
     private DirectionManager directionManager;
+    private ScheduleManager scheduleManager;
 
     public static TheApplication get() {
         return instance;
@@ -32,16 +32,16 @@ public class TheApplication extends Application {
 
         assetManager = getAssets();
 
-        scheduleManager = new ScheduleManager();
         directionManager = new DirectionManager();
-    }
-
-    public ScheduleManager getScheduleManager() {
-        return scheduleManager;
+        scheduleManager = new ScheduleManager(directionManager);
     }
 
     public DirectionManager getDirectionManager() {
         return directionManager;
+    }
+
+    public ScheduleManager getScheduleManager() {
+        return scheduleManager;
     }
 
     public AssetManager getAssetManager() {
