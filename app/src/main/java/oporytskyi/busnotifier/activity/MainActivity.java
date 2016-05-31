@@ -3,6 +3,7 @@ package oporytskyi.busnotifier.activity;
 import android.app.AlarmManager;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +22,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.TimePicker;
 import oporytskyi.busnotifier.R;
 import oporytskyi.busnotifier.TheApplication;
 import oporytskyi.busnotifier.dto.Direction;
@@ -30,8 +33,11 @@ import oporytskyi.busnotifier.receiver.AlarmReceiver;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalTime;
+import org.joda.time.Period;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.PeriodFormatter;
+import org.joda.time.format.PeriodFormatterBuilder;
 
 import java.util.List;
 import java.util.TimeZone;
@@ -39,12 +45,14 @@ import java.util.TimeZone;
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = MainActivity.class.getName();
 
+    private TextView beforehandView;
     private LinearLayout departuresArea;
 
     private DirectionManager directionManager;
     private ScheduleManager scheduleManager;
 
     private Direction direction;
+    private PeriodFormatter periodFormatter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     return;
                 }
                 LocalTime closest = scheduleManager.getClosest(direction);
-                schedule(closest, direction.getName());
+                schedule(closest, direction);
             }
         });
 
@@ -75,6 +83,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        beforehandView = (TextView) findViewById(R.id.beforehand);
         departuresArea = (LinearLayout) findViewById(R.id.ll_departures);
 
         TheApplication theApplication = TheApplication.get();
@@ -92,12 +101,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 public boolean onMenuItemClick(MenuItem item) {
                     Log.d(TAG, "onNavigationItemSelected " + item);
                     MainActivity.this.direction = direction;
-                    generateTimes(direction);
                     toolbar.setTitle(direction.getName());
+                    beforehandView.setText("Beforehand: " + direction.getBeforehand().toString(periodFormatter));
+                    generateTimes(direction);
                     return false;   //  close drawer in onNavigationItemSelected
                 }
             });
         }
+
+        periodFormatter = new PeriodFormatterBuilder().appendHours().appendSuffix("h").appendMinutes().appendSuffix("m").toFormatter();
     }
 
     @Override
@@ -149,11 +161,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             Button button = new Button(this);
             DateTime dateTime = localTime.toDateTimeToday(directionManager.getDateTimeZone());
             button.setText(dateTime.toString(dateTimeFormatter));
-            if (scheduleManager.isEligable(localTime, directionManager.getBeforehand(direction.getName()))) {
+            if (scheduleManager.isEligable(localTime, direction.getBeforehand())) {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        schedule(localTime, direction.getName());
+                        schedule(localTime, direction);
                     }
                 });
             } else {
@@ -163,10 +175,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    private void schedule(LocalTime localTime, String directionName) {
+    private void schedule(LocalTime localTime, Direction direction) {
         DateTime dateTime = localTime.toDateTimeToday(directionManager.getDateTimeZone()).toDateTime(DateTimeZone.forTimeZone(TimeZone.getDefault()));
-        setAlarm(dateTime.minus(directionManager.getBeforehand(directionName)));
-        showNotification(dateTime, directionName);
+        setAlarm(dateTime.minus(direction.getBeforehand()));
+        showNotification(dateTime, direction.getName());
         Snackbar.make(departuresArea, "Scheduled!", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show();
     }
@@ -197,5 +209,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         int mNotificationId = 1;
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(mNotificationId, mBuilder.build());
+    }
+
+    public void onTimeClick(View view) {
+        if (direction == null) {
+            Snackbar.make(view, "Choose direction!", Snackbar.LENGTH_LONG).show();
+            return;
+        }
+        Period beforehand = direction.getBeforehand();
+        new TimePickerDialog(this, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                Period newBeforehand = new Period(hourOfDay, minute, 0, 0);
+                direction.setBeforehand(newBeforehand);
+                beforehandView.setText("Beforehand: " + newBeforehand.toString(periodFormatter));
+                generateTimes(direction);
+                directionManager.save();
+            }
+        }, beforehand.getHours(), beforehand.getMinutes(), true).show();
     }
 }

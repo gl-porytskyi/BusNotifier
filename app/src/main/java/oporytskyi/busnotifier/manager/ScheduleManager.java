@@ -23,8 +23,7 @@ public class ScheduleManager {
 
     public LocalTime getClosest(Direction direction) {
         for (LocalTime departure : direction.getDepartures()) {
-            Period beforehand = directionManager.getBeforehand(direction.getName());
-            if (isEligable(departure, beforehand)) {
+            if (isEligable(departure, direction.getBeforehand())) {
                 return departure;
             }
         }

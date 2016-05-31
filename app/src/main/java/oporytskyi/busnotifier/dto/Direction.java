@@ -1,6 +1,7 @@
 package oporytskyi.busnotifier.dto;
 
 import org.joda.time.LocalTime;
+import org.joda.time.Period;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
 public class Direction {
     private String name;
     private List<LocalTime> departures;
+    private Period beforehand;
 
     public String getName() {
         return name;
@@ -25,5 +27,16 @@ public class Direction {
 
     public void setDepartures(List<LocalTime> departures) {
         this.departures = departures;
+    }
+
+    public Period getBeforehand() {
+        if (beforehand == null) {
+            beforehand = Period.minutes(0);
+        }
+        return beforehand;
+    }
+
+    public void setBeforehand(Period beforehand) {
+        this.beforehand = beforehand;
     }
 }
