@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -20,10 +21,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.TimePicker;
+import android.widget.*;
 import oporytskyi.busnotifier.R;
 import oporytskyi.busnotifier.TheApplication;
 import oporytskyi.busnotifier.dto.Direction;
@@ -224,7 +222,18 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 direction.setBeforehand(newBeforehand);
                 beforehandView.setText("Beforehand: " + newBeforehand.toString(periodFormatter));
                 generateTimes(direction);
-                directionManager.save();
+                new AsyncTask<Void, Void, Void>() {
+                    @Override
+                    protected Void doInBackground(Void... params) {
+                        directionManager.save();
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Void aVoid) {
+                        Toast.makeText(MainActivity.this, "Saved", Toast.LENGTH_SHORT).show();
+                    }
+                }.execute((Void) null);
             }
         }, beforehand.getHours(), beforehand.getMinutes(), true).show();
     }
