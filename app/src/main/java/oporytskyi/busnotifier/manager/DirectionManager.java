@@ -35,6 +35,7 @@ public class DirectionManager {
     private final ObjectMapper objectMapper;
     private List<Direction> directions;
     private DateTimeZone dateTimeZone = DateTimeZone.forID("Europe/Kiev");
+    private Direction current;
 
     public DirectionManager() {
         objectMapper = new ObjectMapper();
@@ -91,6 +92,14 @@ public class DirectionManager {
         } catch (IOException e) {
             Log.e(TAG, "e", e);
         }
+    }
+
+    public Direction getCurrent() {
+        return current;
+    }
+
+    public void setCurrent(Direction current) {
+        this.current = current;
     }
 
     private static class LocalTimeDeserializer extends JsonDeserializer<LocalTime> {
