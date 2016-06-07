@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
                 LocalTime closest = scheduleManager.getClosest(direction);
                 scheduleManager.schedule(closest, direction);
+                Snackbar.make(view, "Scheduled!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             }
         });
 

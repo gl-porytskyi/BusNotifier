@@ -84,6 +84,7 @@ public class DirectionFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
                         scheduleManager.schedule(localTime, direction);
+                        Snackbar.make(v, "Scheduled!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                     }
                 });
             } else {

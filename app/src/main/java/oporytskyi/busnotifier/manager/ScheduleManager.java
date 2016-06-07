@@ -32,6 +32,9 @@ public class ScheduleManager {
     private Application application;
     private DirectionManager directionManager;
 
+    private DateTime alarm;
+    private DateTime departure;
+
     public ScheduleManager(DirectionManager directionManager) {
         this.directionManager = directionManager;
         application = TheApplication.get();
@@ -52,10 +55,14 @@ public class ScheduleManager {
     }
 
     public void schedule(LocalTime localTime, Direction direction) {
-        DateTime dateTime = localTime.toDateTimeToday(directionManager.getDateTimeZone()).toDateTime(DateTimeZone.forTimeZone(TimeZone.getDefault()));
-        setAlarm(dateTime.minus(direction.getBeforehand()));
-        showNotification(dateTime, direction.getName());
-//        Snackbar.make(departuresArea, "ScheduledFragment!", Snackbar.LENGTH_LONG)                .setAction("Action", null).show();
+        departure = localTime.toDateTimeToday(directionManager.getDateTimeZone()).toDateTime(DateTimeZone.forTimeZone(TimeZone.getDefault()));
+        alarm = departure.minus(direction.getBeforehand());
+        setAlarm(alarm);
+        showNotification(departure, direction.getName());
+    }
+
+    public DateTime getAlarm() {
+        return alarm;
     }
 
     private void setAlarm(DateTime dateTime) {
@@ -67,6 +74,10 @@ public class ScheduleManager {
 
         PendingIntent broadcast = PendingIntent.getBroadcast(application, 0, new Intent(AlarmReceiver.ALARM_ACTION), 0);
         alarmManager.setAlarmClock(alarmClockInfo, broadcast);
+    }
+
+    public DateTime getDeparture() {
+        return departure;
     }
 
     private void showNotification(DateTime dateTime, String directionName) {
