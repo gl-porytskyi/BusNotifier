@@ -24,14 +24,19 @@ import oporytskyi.busnotifier.fragment.DirectionFragment;
 import oporytskyi.busnotifier.fragment.ScheduledFragment;
 import oporytskyi.busnotifier.manager.DirectionManager;
 import oporytskyi.busnotifier.manager.ScheduleManager;
+import oporytskyi.busnotifier.manager.VibratorManager;
 import org.joda.time.LocalTime;
 
+import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = MainActivity.class.getName();
+
+    @Inject
+    VibratorManager vibratorManager;
 
     private DirectionManager directionManager;
     private ScheduleManager scheduleManager;
@@ -95,6 +100,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             });
         }
         showFragment(scheduledFragment);
+        ((TheApplication) getApplication()).getTheComponent().inject(this);
+        vibratorManager.stop();
     }
 
     public void schedule(View view, Direction direction, LocalTime closest) {

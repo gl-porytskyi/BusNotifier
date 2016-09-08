@@ -6,19 +6,28 @@ import android.content.Intent;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Vibrator;
 import android.util.Log;
+import oporytskyi.busnotifier.TheApplication;
+import oporytskyi.busnotifier.manager.VibratorManager;
+
+import javax.inject.Inject;
 
 public class AlarmReceiver extends BroadcastReceiver {
     public static final String ALARM_ACTION = "oporytskyi.busnotifier.receiver.AlarmReceiver.ALARM_ACTION";
 
     private static final String TAG = AlarmReceiver.class.getName();
 
+    @Inject
+    VibratorManager vibratorManager;
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.i(TAG, "ALARM!!!");
-        playSound(context);
-        vibrate(context);
+        Log.i(TAG, "Alarm goes off");
+
+        ((TheApplication) context.getApplicationContext()).getTheComponent().inject(this);
+
+//        playSound(context);
+        vibratorManager.vibrate();
     }
 
     private void playSound(Context context) {
@@ -33,10 +42,5 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
         Ringtone r = RingtoneManager.getRingtone(context, alert);
         r.play();
-    }
-
-    private void vibrate(Context context) {
-        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-        vibrator.vibrate(new long[]{0, 500, 500, 500, 100, 100, 100, 100, 100, 100, 100}, 0);
     }
 }

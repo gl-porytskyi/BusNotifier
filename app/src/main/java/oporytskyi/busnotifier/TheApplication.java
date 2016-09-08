@@ -3,6 +3,9 @@ package oporytskyi.busnotifier;
 import android.app.Application;
 import android.content.res.AssetManager;
 import android.support.v7.app.AppCompatDelegate;
+import oporytskyi.busnotifier.dagger.DaggerTheComponent;
+import oporytskyi.busnotifier.dagger.TheComponent;
+import oporytskyi.busnotifier.dagger.TheModule;
 import oporytskyi.busnotifier.manager.DirectionManager;
 import oporytskyi.busnotifier.manager.ScheduleManager;
 
@@ -19,7 +22,9 @@ public class TheApplication extends Application {
     private AssetManager assetManager;
     private DirectionManager directionManager;
     private ScheduleManager scheduleManager;
+    private TheComponent theComponent;
 
+    @Deprecated
     public static TheApplication get() {
         return instance;
     }
@@ -34,6 +39,10 @@ public class TheApplication extends Application {
 
         directionManager = new DirectionManager();
         scheduleManager = new ScheduleManager(directionManager);
+
+        theComponent = DaggerTheComponent.builder()
+                .theModule(new TheModule(this))
+                .build();
     }
 
     public DirectionManager getDirectionManager() {
@@ -46,5 +55,9 @@ public class TheApplication extends Application {
 
     public AssetManager getAssetManager() {
         return assetManager;
+    }
+
+    public TheComponent getTheComponent() {
+        return theComponent;
     }
 }
