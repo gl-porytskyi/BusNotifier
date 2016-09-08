@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import oporytskyi.busnotifier.R;
 import oporytskyi.busnotifier.TheApplication;
+import oporytskyi.busnotifier.activity.MainActivity;
 import oporytskyi.busnotifier.dto.Direction;
 import oporytskyi.busnotifier.manager.DirectionManager;
 import oporytskyi.busnotifier.manager.ScheduleManager;
@@ -83,8 +84,7 @@ public class DirectionFragment extends Fragment {
                 button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        scheduleManager.schedule(localTime, direction);
-                        Snackbar.make(v, "Scheduled!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                        ((MainActivity) getActivity()).schedule(v, direction, localTime);
                     }
                 });
             } else {

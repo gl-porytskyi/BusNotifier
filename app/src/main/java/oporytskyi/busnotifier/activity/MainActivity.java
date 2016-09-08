@@ -56,8 +56,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     return;
                 }
                 LocalTime closest = scheduleManager.getClosest(direction);
-                scheduleManager.schedule(closest, direction);
-                Snackbar.make(view, "Scheduled!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+                schedule(view, direction, closest);
             }
         });
 
@@ -95,6 +94,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
         }
+        showFragment(scheduledFragment);
+    }
+
+    public void schedule(View view, Direction direction, LocalTime closest) {
+        scheduleManager.schedule(closest, direction);
+        Snackbar.make(view, "Scheduled!", Snackbar.LENGTH_LONG).setAction("Action", null).show();
         showFragment(scheduledFragment);
     }
 
