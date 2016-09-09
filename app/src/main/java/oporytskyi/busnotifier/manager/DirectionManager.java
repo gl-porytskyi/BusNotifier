@@ -1,5 +1,6 @@
 package oporytskyi.busnotifier.manager;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.Log;
@@ -10,7 +11,6 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import oporytskyi.busnotifier.TheApplication;
 import oporytskyi.busnotifier.dto.Direction;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalTime;
@@ -30,21 +30,24 @@ import java.util.List;
 public class DirectionManager {
     private static final String TAG = DirectionManager.class.getName();
     private static final String FILE_NAME = "schedule.json";
-
     private static DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("HH:mm");
+
     private final ObjectMapper objectMapper;
+
+    private Application application;
     private List<Direction> directions;
     private DateTimeZone dateTimeZone = DateTimeZone.forID("Europe/Kiev");
     private Direction current;
 
-    public DirectionManager() {
+    public DirectionManager(Application application) {
         objectMapper = new ObjectMapper();
-        SimpleModule testModule = new SimpleModule("MyModule", new Version(1, 0, 0, null, null, null))
+        objectMapper.registerModule(new SimpleModule("MyModule", new Version(1, 0, 0, null, null, null))
                 .addDeserializer(LocalTime.class, new LocalTimeDeserializer())
                 .addSerializer(LocalTime.class, new LocalTimeSerializer())
                 .addDeserializer(Period.class, new PeriodDeserializer())
-                .addSerializer(Period.class, new PeriodSerializer());
-        objectMapper.registerModule(testModule);
+                .addSerializer(Period.class, new PeriodSerializer()));
+
+        this.application = application;
 
         if (!load()) {
             loadDefault();
@@ -52,18 +55,17 @@ public class DirectionManager {
     }
 
     private boolean load() {
-        Context context = TheApplication.get().getApplicationContext();
-        try (FileInputStream fileInputStream = context.openFileInput(FILE_NAME)) {
+        try (FileInputStream fileInputStream = application.openFileInput(FILE_NAME)) {
             load(fileInputStream);
         } catch (IOException e) {
-            Log.e(TAG, "e", e);
+            Log.e(TAG, "Saves not found.");
             return false;
         }
         return true;
     }
 
     private void loadDefault() {
-        AssetManager assetManager = TheApplication.get().getAssetManager();
+        AssetManager assetManager = application.getAssets();
         try (InputStream inputStream = assetManager.open(FILE_NAME)) {
             load(inputStream);
         } catch (IOException e) {
@@ -86,8 +88,7 @@ public class DirectionManager {
     }
 
     public void save() {
-        Context context = TheApplication.get().getApplicationContext();
-        try (FileOutputStream fileOutputStream = context.openFileOutput(FILE_NAME, Context.MODE_PRIVATE)) {
+        try (FileOutputStream fileOutputStream = application.openFileOutput(FILE_NAME, Context.MODE_PRIVATE)) {
             objectMapper.writeValue(fileOutputStream, directions);
         } catch (IOException e) {
             Log.e(TAG, "e", e);

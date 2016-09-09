@@ -37,9 +37,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Inject
     VibratorManager vibratorManager;
-
-    private DirectionManager directionManager;
-    private ScheduleManager scheduleManager;
+    @Inject
+    DirectionManager directionManager;
+    @Inject
+    ScheduleManager scheduleManager;
 
     private ScheduledFragment scheduledFragment = new ScheduledFragment();
     private Map<String, DirectionFragment> directionFragmentMap = new HashMap<>();
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         setContentView(R.layout.activity_main);
         final Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ((TheApplication) getApplication()).getTheComponent().inject(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -74,10 +76,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        TheApplication theApplication = TheApplication.get();
-        scheduleManager = theApplication.getScheduleManager();
-        directionManager = theApplication.getDirectionManager();
-
         Menu menu = navigationView.getMenu();
         SubMenu subMenu = menu.getItem(menu.size() - 1).getSubMenu();
         List<Direction> directions = directionManager.getDirections();
@@ -100,7 +98,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             });
         }
         showFragment(scheduledFragment);
-        ((TheApplication) getApplication()).getTheComponent().inject(this);
         vibratorManager.stop();
     }
 
@@ -160,5 +157,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         transaction.replace(R.id.fragment_container, fragment);
 //        transaction.addToBackStack(null);
         transaction.commit();
+    }
+
+    public void onClickCancel(View view) {
+        scheduleManager.cancel();
     }
 }

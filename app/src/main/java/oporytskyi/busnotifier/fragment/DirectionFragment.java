@@ -26,26 +26,27 @@ import org.joda.time.format.DateTimeFormatter;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
+import javax.inject.Inject;
+
 /**
  * A simple {@link Fragment} subclass.
  */
 public class DirectionFragment extends Fragment {
     private static final String TAG = DirectionFragment.class.getName();
+    private final PeriodFormatter periodFormatter = new PeriodFormatterBuilder().appendHours().appendSuffix("h").appendMinutes().appendSuffix("m").toFormatter();
 
-    private PeriodFormatter periodFormatter;
+    @Inject
+    DirectionManager directionManager;
+    @Inject
+    ScheduleManager scheduleManager;
 
     private TextView beforehandView;
     private LinearLayout departuresArea;
 
-    private DirectionManager directionManager;
-    private ScheduleManager scheduleManager;
-
-    public DirectionFragment() {
-        periodFormatter = new PeriodFormatterBuilder().appendHours().appendSuffix("h").appendMinutes().appendSuffix("m").toFormatter();
-
-        TheApplication theApplication = TheApplication.get();
-        scheduleManager = theApplication.getScheduleManager();
-        directionManager = theApplication.getDirectionManager();
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ((TheApplication) getActivity().getApplication()).getTheComponent().inject(this);
     }
 
     @Override

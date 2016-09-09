@@ -19,6 +19,7 @@ import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 
+import javax.inject.Inject;
 import java.util.TimeZone;
 
 /**
@@ -30,6 +31,9 @@ import java.util.TimeZone;
 public class ScheduledFragment extends Fragment {
     private final static String TAG = ScheduledFragment.class.getName();
 
+    @Inject
+    ScheduleManager scheduleManager;
+
     private OnFragmentInteractionListener mListener;
     private Handler handler = new Handler();
     private TextView scheduled;
@@ -39,7 +43,6 @@ public class ScheduledFragment extends Fragment {
         public void run() {
             Log.d(TAG, "updateView");
             handler.postDelayed(this, 1000);
-            ScheduleManager scheduleManager = TheApplication.get().getScheduleManager();
             DateTime departure = scheduleManager.getDeparture();
             if (departure != null) {
                 DateTime alarm = scheduleManager.getAlarm();
@@ -68,6 +71,7 @@ public class ScheduledFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ((TheApplication) getActivity().getApplication()).getTheComponent().inject(this);
     }
 
     @Override
