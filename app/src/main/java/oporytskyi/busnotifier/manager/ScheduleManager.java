@@ -1,13 +1,15 @@
 package oporytskyi.busnotifier.manager;
 
+import android.app.Application;
+import oporytskyi.busnotifier.TheApplication;
 import oporytskyi.busnotifier.dto.Direction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalTime;
 import org.joda.time.Period;
 
-import javax.inject.Inject;
 import java.util.TimeZone;
+import javax.inject.Inject;
 
 /**
  * Created by oleksandr.porytskyi on 5/24/2016.
@@ -24,6 +26,10 @@ public class ScheduleManager {
 
     private DateTime alarm;
     private DateTime departure;
+
+    public ScheduleManager(Application application) {
+        ((TheApplication) application).getTheComponent().inject(this);
+    }
 
     public boolean isEligable(LocalTime localTime, Period beforehand) {
         LocalTime now = LocalTime.now(directionManager.getDateTimeZone());

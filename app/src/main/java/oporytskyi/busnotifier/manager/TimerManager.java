@@ -13,12 +13,15 @@ import org.joda.time.DateTime;
  * @author Oleksandr Porytskyi
  */
 public class TimerManager {
+    private final PendingIntent broadcast;
+    private AlarmManager alarmManager;
+
     private Application application;
-    private final PendingIntent broadcast = PendingIntent.getBroadcast(application, 0, new Intent(AlarmReceiver.ALARM_ACTION), 0);
-    private AlarmManager alarmManager = (AlarmManager) application.getSystemService(Context.ALARM_SERVICE);
 
     public TimerManager(Application application) {
         this.application = application;
+        broadcast = PendingIntent.getBroadcast(this.application, 0, new Intent(AlarmReceiver.ALARM_ACTION), 0);
+        alarmManager = (AlarmManager) application.getSystemService(Context.ALARM_SERVICE);
     }
 
     public void setAlarm(DateTime dateTime) {

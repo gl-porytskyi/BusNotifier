@@ -3,7 +3,11 @@ package oporytskyi.busnotifier.dagger;
 import android.app.Application;
 import dagger.Module;
 import dagger.Provides;
-import oporytskyi.busnotifier.manager.*;
+import oporytskyi.busnotifier.manager.DirectionManager;
+import oporytskyi.busnotifier.manager.MessageManager;
+import oporytskyi.busnotifier.manager.ScheduleManager;
+import oporytskyi.busnotifier.manager.TimerManager;
+import oporytskyi.busnotifier.manager.VibratorManager;
 
 import javax.inject.Singleton;
 
@@ -45,6 +49,6 @@ public class TheModule {
     @Provides
     @Singleton
     ScheduleManager scheduleManager() {
-        return new ScheduleManager();
+        return new ScheduleManager(application);
     }
 }

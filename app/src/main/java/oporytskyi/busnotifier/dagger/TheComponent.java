@@ -4,6 +4,7 @@ import dagger.Component;
 import oporytskyi.busnotifier.activity.MainActivity;
 import oporytskyi.busnotifier.fragment.DirectionFragment;
 import oporytskyi.busnotifier.fragment.ScheduledFragment;
+import oporytskyi.busnotifier.manager.ScheduleManager;
 import oporytskyi.busnotifier.receiver.AlarmReceiver;
 
 import javax.inject.Singleton;
@@ -21,4 +22,6 @@ public interface TheComponent {
     void inject(ScheduledFragment o);
 
     void inject(DirectionFragment o);
+
+    void inject(ScheduleManager o);
 }
