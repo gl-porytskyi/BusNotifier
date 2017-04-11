@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "24.0.3"
+    buildToolsVersion "25.0.2"
 
     defaultConfig {
         applicationId "oporytskyi.busnotifier"
@@ -34,12 +34,12 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
 
-    compile group: 'joda-time', name: 'joda-time', version: '2.9.3'
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.7.4'
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
+    compile group: 'joda-time', name: 'joda-time', version: '2.9.9'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.8.8'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
 
-    ext.daggerVersion = '2.8'
-    compile 'com.google.dagger:dagger:' + daggerVersion
-    annotationProcessor 'com.google.dagger:dagger-compiler:' + daggerVersion
+    ext.daggerVersion = '2.10'
+    compile "com.google.dagger:dagger:$daggerVersion"
+    annotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
 }
