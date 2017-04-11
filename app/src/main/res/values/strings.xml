@@ -9,4 +9,9 @@
     <string name="scheduled_time">%1$s before alarm\n%2$s before departure</string>
     <string name="scheduled_nothing">Nothing scheduled</string>
     <string name="cancel">Cancel</string>
+    <string name="beforehand">"Beforehand: %s"</string>
+    <string name="scheduled">Scheduled</string>
+    <string name="directions">Directions</string>
+    <string name="title">Shuttle Bus Notifier</string>
+    <string name="subtitle">don\'t miss it</string>
 </resources>

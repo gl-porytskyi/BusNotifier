@@ -63,7 +63,7 @@ public class DirectionFragment extends Fragment {
         departuresArea = (LinearLayout) getView().findViewById(R.id.ll_departures);
 
         Direction direction = directionManager.getCurrent();
-        beforehandView.setText("Beforehand: " + direction.getBeforehand().toString(periodFormatter));
+        beforehandView.setText(getString(R.string.beforehand, direction.getBeforehand().toString(periodFormatter)));
         beforehandView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,7 +107,7 @@ public class DirectionFragment extends Fragment {
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
                 Period newBeforehand = new Period(hourOfDay, minute, 0, 0);
                 direction.setBeforehand(newBeforehand);
-                beforehandView.setText("Beforehand: " + newBeforehand.toString(periodFormatter));
+                beforehandView.setText(getString(R.string.beforehand, newBeforehand.toString(periodFormatter)));
                 generateTimes();
                 new AsyncTask<Void, Void, Void>() {
                     @Override

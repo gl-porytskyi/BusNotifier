@@ -4,7 +4,7 @@
                 android:layout_height="match_parent"
                 tools:context=".fragment.DirectionFragment">
     <TextView
-            android:text="Choose direction!"
+            android:text="@string/beforehand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/beforehand"
             android:layout_alignParentTop="true" android:layout_centerHorizontal="true"
