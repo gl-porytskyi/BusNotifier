@@ -63,7 +63,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     return;
                 }
                 LocalTime closest = scheduleManager.getClosest(direction);
-                schedule(view, direction, closest);
+                if (closest != null) {
+                    schedule(view, direction, closest);
+                } else {
+                    Snackbar.make(view, "You are too late :(", Snackbar.LENGTH_LONG).show();
+                }
             }
         });
 
