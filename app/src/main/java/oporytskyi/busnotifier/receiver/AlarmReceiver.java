@@ -8,6 +8,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.util.Log;
 import oporytskyi.busnotifier.TheApplication;
+import oporytskyi.busnotifier.activity.MainActivity;
 import oporytskyi.busnotifier.manager.VibratorManager;
 
 import javax.inject.Inject;
@@ -25,6 +26,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         Log.i(TAG, "Alarm goes off");
 
         ((TheApplication) context.getApplicationContext()).getTheComponent().inject(this);
+
+        Intent activityIntent = new Intent(context, MainActivity.class);
+        activityIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(activityIntent);
 
 //        playSound(context);
         vibratorManager.vibrate();
